@@ -1,4 +1,5 @@
 package Blog.app.Blog;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
@@ -12,8 +13,22 @@ public class Comments {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private Users user;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id")
+    @JsonIgnore
+    private Posts post;
+
+    public Posts getPost() {
+        return post;
+    }
+
+    public void setPost(Posts post) {
+        this.post = post;
+    }
 
     public Long getId() {
         return id;

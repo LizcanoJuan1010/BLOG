@@ -1,18 +1,20 @@
 package Blog.app.Blog;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 @Entity
 
 @NoArgsConstructor
-public class Drafts {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String label;
+    public class Drafts {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String label;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private Users user;
 
     public Long getId() {

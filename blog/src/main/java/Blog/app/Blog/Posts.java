@@ -1,7 +1,11 @@
 package Blog.app.Blog;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
+
+import java.util.List;
+
 @Entity
 
 @NoArgsConstructor
@@ -13,8 +17,22 @@ public class Posts {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private Users user;
+
+    @OneToMany(mappedBy = "post")
+    private List<Comments> comentarios;
+
+
+    public List<Comments> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comments> comentarios) {
+        this.comentarios = comentarios;
+    }
+
     public Long getId() {
         return id;
     }
