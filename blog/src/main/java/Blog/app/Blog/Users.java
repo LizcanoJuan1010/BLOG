@@ -15,13 +15,19 @@ public class Users {
     private String password;
     private Long Friends;
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Users>  amigos;
-    @OneToMany(mappedBy = "usuario")
+    @ManyToMany
+    @JoinTable(
+            name = "amistades",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "amigo_id")
+    )
+    private List<Users> amigos;
+
+    @OneToMany(mappedBy = "user")
     private List<Posts> posts;
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "user")
     private List<Drafts> drafts;
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "user")
     private List<Comments> comments;
 
 
