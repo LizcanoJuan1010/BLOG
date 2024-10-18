@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public class CommentsService {
+
     private final CommentsRepository commentsRepository;
     private final PostsRepository postsRepository;
     private final UsersRepository usersRepository;
@@ -24,13 +25,14 @@ public class CommentsService {
     }
 
     public Comments createComments(Comments comments) {
-        // Validar que la criatura tenga una zona asignada
+
         if (comments.getUser() == null || comments.getPost() == null) {
             throw new IllegalArgumentException("El usuario no existe");
         }
 
         return commentsRepository.save(comments);
     }
+
     public List<Comments> getAllCommentsbyPost(Long post_id) {
         try {
             Posts post = postsRepository.findById(post_id)
@@ -51,8 +53,9 @@ public class CommentsService {
     }
 
     public void deleteComments(Long id) {
-
-    commentsRepository.deleteById(id);
+        Comments comment = commentsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+        commentsRepository.deleteById(id);
     }
 
 

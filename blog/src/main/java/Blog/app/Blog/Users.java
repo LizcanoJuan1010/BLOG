@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-
 @NoArgsConstructor
 public class Users {
     @Id

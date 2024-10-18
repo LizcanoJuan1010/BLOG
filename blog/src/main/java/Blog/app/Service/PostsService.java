@@ -3,10 +3,14 @@ package Blog.app.Service;
 import Blog.app.Blog.Comments;
 import Blog.app.Blog.Posts;
 import Blog.app.Blog.Users;
+import Blog.app.Repository.CommentsRepository;
 import Blog.app.Repository.PostsRepository;
 import Blog.app.Repository.UsersRepository;
+import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -14,11 +18,13 @@ import java.util.List;
 public class PostsService {
     private final PostsRepository postsRepository;
     private final UsersRepository usersRepository;
+    private final CommentsRepository commentsRepository;
     private final CommentsService commentsService;
     @Autowired
-    public PostsService(PostsRepository postsRepository, UsersRepository usersRepository, CommentsService commentsService) {
+    public PostsService(PostsRepository postsRepository, UsersRepository usersRepository, CommentsRepository commentsRepository, CommentsService commentsService) {
         this.postsRepository = postsRepository;
         this.usersRepository = usersRepository;
+        this.commentsRepository = commentsRepository;
         this.commentsService = commentsService;
     }
 
@@ -36,30 +42,28 @@ public class PostsService {
     }
 
     public Posts updatePosts(Long id, Posts posts) {
-        Posts post = postsRepository.findById(id).get();
+        Posts post = postsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
         post.setLabel(posts.getLabel());
         post.setDescription(posts.getDescription());
-
-        return postsRepository.save(posts);
+        post.setComentarios(posts.getComentarios());
+        return postsRepository.save(post);  // Debes guardar el post actualizado, no el nuevo post directamente
     }
 
-    public Comments addCommentToPost(Long postId, Long userId, String description) {
+
+    public Comments addCommentToPost( Long postId, Comments comment)  {
 
         Posts post = postsRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        Users user = usersRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-
-        Comments comment = new Comments();
-        comment.setDescription(description);
         comment.setPost(post);
-        comment.setUser(user);
 
-        // Guarda el comentario usando el CommentsService
-        return commentsService.createComments(comment);
+
+
+        return commentsRepository.save(comment);
     }
+
     public List<Posts> getAllPostsbyUser(Long user_id) {
         try {
             Users user = usersRepository.findById(user_id)

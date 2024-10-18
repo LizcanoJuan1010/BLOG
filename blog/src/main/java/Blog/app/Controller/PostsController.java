@@ -15,7 +15,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/posts")
-public class PostsController {
+public class    PostsController {
 
     private final PostsService postsService;
     private final PostsRepository postsRepository;
@@ -51,15 +51,8 @@ public class PostsController {
     // Agregar un comentario a un post
     @PostMapping("/{postId}/comments")
     public ResponseEntity<Comments> addCommentToPost(@PathVariable Long postId, @RequestBody Comments comment) {
-        // Buscar el post relacionado
-        Posts post = postsRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        // Establecer el post en el comentario
-        comment.setPost(post);
-
-        // Guardar el comentario
-        Comments createdComment = commentsRepository.save(comment);
+        Comments createdComment = postsService.addCommentToPost(postId, comment);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
     }
