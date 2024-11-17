@@ -1,8 +1,10 @@
 package Blog.app.Controller;
 
+import Blog.app.Blog.Activity;
 import Blog.app.Blog.Drafts;
 import Blog.app.Blog.Posts;
 import Blog.app.Blog.Users;
+import Blog.app.Service.ActivityService;
 import Blog.app.Service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class UsersController {
 
     private final UsersService usersService;
+    private final ActivityService activityService;
 
     @Autowired
-    public UsersController(UsersService usersService) {
+    public UsersController(UsersService usersService, ActivityService activityService) {
         this.usersService = usersService;
+        this.activityService = activityService;
     }
 
     // Crear un nuevo usuario
@@ -49,6 +53,22 @@ public class UsersController {
         return ResponseEntity.noContent().build();
     }
 
+    // Endpoint para obtener la actividad de un usuario
+    @GetMapping("/{id}/activity")
+    public ResponseEntity<Activity> getUserActivity(@PathVariable Long id) {
+        Activity activity = activityService.getActivityByUserId(id);
+        return ResponseEntity.ok(activity);
+    }
+    // Login de usuario
+    @PostMapping("/login")
+    public ResponseEntity<Users> loginUser(@RequestBody Users loginData) {
+        Users user = usersService.findByName(loginData.getName());
+        if (user != null && user.getPassword().equals(loginData.getPassword())) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Error 401 si no coincide
+        }
+    }
     // Crear un post para un usuario
     @PostMapping("/{userId}/posts")
     public ResponseEntity<Posts> createPostForUser(@PathVariable Long userId, @RequestBody Posts post) {
@@ -61,15 +81,5 @@ public class UsersController {
     public ResponseEntity<Drafts> createDraftForUser(@PathVariable Long userId, @RequestBody Drafts draft) {
         Drafts createdDraft = usersService.createDraftForUser(userId, draft);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdDraft);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<Users> loginUser(@RequestBody Users loginData) {
-        Users user = usersService.findByName(loginData.getName());
-        if (user != null && user.getPassword().equals(loginData.getPassword())) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Error 401 si no coincide
-        }
     }
 }

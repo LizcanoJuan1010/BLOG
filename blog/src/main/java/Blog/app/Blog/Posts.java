@@ -21,7 +21,7 @@ public class Posts {
     @JsonIgnore
     private Users user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post")
     private List<Comments> comentarios;
 
 

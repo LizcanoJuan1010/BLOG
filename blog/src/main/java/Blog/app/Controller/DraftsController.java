@@ -28,7 +28,7 @@ public class DraftsController {
     }
 
     // Obtener todos los borradores de un usuario
-    @GetMapping("/user/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<List<Drafts>> getAllDraftsByUser(@PathVariable Long userId) {
         List<Drafts> drafts = draftsService.getAllDraftsbyUser(userId);
         return ResponseEntity.ok(drafts);
